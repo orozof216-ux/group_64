@@ -1,0 +1,17 @@
+-- database: ./todo.db
+
+SELECT * FROM tasks;
+
+    CREATE TABLE IF NOT EXISTS test (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        number INTEGER NOT NULL
+    );
+
+SELECT * FROM test; 
+
+INSERT INTO test (name, number) VALUES (321, 0709863906);
+
+UPDATE test SET number = 070986 WHERE id = 1;
+
+select * from test WHERE name = 'Нурислам';
