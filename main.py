@@ -53,4 +53,6 @@ def main(page: ft.Page):
 if __name__ == "__main__":
     main_db.init_db()
     ft.run(main, view=ft.AppView.WEB_BROWSER)
+
+
     
