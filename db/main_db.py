@@ -13,11 +13,11 @@ def init_db():
 
 def add_task(task):
     conn = sqlite3.connect(path_db)
-    cursor = conn.cursor()
-    cursor.execute(queries.insert_task, (task,))
+    cursor = conn.cursor()        
+    cursor.execute(queries.insert_task, (task, ))
     conn.commit()
     task_id = cursor.lastrowid
-    conn.close()
+    conn.close()                        
     return task_id
 
 
@@ -36,6 +36,8 @@ def delete_task(task_id):
     conn.commit()
     conn.close()
 
+
+# 🔥 ДОБАВЛЕНО ДЛЯ ДЗ 7
 
 def update_task_status(task_id, done):
     conn = sqlite3.connect(path_db)
