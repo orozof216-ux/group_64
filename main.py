@@ -102,9 +102,9 @@ def main(page: ft.Page):
         load_tasks()
 
     filter_buttons = ft.Row([
-        ft.ElevatedButton('Все', on_click=lambda e: set_filter('all')),
-        ft.ElevatedButton('В работе', on_click=lambda e: set_filter('uncompleted')),
-        ft.ElevatedButton('Готово', on_click=lambda e: set_filter('completed'))
+        ft.ElevatedButton('Все задачи', on_click=lambda e: set_filter('all')),
+        ft.ElevatedButton('Не купленные', on_click=lambda e: set_filter('uncompleted')),
+        ft.ElevatedButton('Купленные', on_click=lambda e: set_filter('completed'))
     ])
 
     page.add(
