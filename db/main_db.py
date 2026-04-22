@@ -1,34 +1,30 @@
-# Реляционные (SQL) | Нереляционные (NoSQL)
-
 import sqlite3
-
 from config import path_db
 from db import queries
 
 
-
 def init_db():
-    conn = sqlite3.connect(path_db)     # Соединение к БД
-    cursor = conn.cursor()              # Исполнитель который относит запросы к БД
-    cursor.execute(queries.tasks_table)
-    # cursor.execute('select * from tasks')
-    conn.commit()                       # Зафиксировать измения в БД
-    conn.close()                        # Закрываем соедение
-
-
-def add_task(task):
     conn = sqlite3.connect(path_db)
-    cursor = conn.cursor()        
-    cursor.execute(queries.insert_task, (task, ))
+    cursor = conn.cursor()
+    cursor.execute(queries.tasks_table)
+    conn.commit()
+    conn.close()
+
+
+def add_task(task, count=1):
+    conn = sqlite3.connect(path_db)
+    cursor = conn.cursor()
+    cursor.execute(queries.insert_task, (task,))
     conn.commit()
     task_id = cursor.lastrowid
-    conn.close()                        
+    conn.close()
     return task_id
 
 
 def update_task(task_id, new_task=None, completed=None):
     conn = sqlite3.connect(path_db)
-    cursor = conn.cursor()        
+    cursor = conn.cursor()
+
     if new_task is not None:
         cursor.execute(queries.update_task, (new_task, task_id))
     elif completed is not None:
@@ -36,14 +32,15 @@ def update_task(task_id, new_task=None, completed=None):
             'UPDATE tasks SET completed = ? WHERE id = ?',
             (completed, task_id)
         )
-        
+
     conn.commit()
-    conn.close()        
+    conn.close()
 
 
 def get_tasks(filter_type):
     conn = sqlite3.connect(path_db)
-    cursor = conn.cursor()        
+    cursor = conn.cursor()
+
     if filter_type == 'all':
         cursor.execute(queries.select_tasks)
     elif filter_type == 'completed':
@@ -53,7 +50,7 @@ def get_tasks(filter_type):
 
     tasks = cursor.fetchall()
     conn.close()
-    return tasks  
+    return tasks
 
 
 def delete_task(task_id):

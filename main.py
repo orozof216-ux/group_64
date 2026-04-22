@@ -9,17 +9,28 @@ def main(page: ft.Page):
     task_list = ft.Column()
     filter_type = 'all'
 
+    counter_text = ft.Text("Куплено: 0")
+
     def load_tasks():
         task_list.controls.clear()
         tasks = main_db.get_tasks(filter_type=filter_type)
 
+        bought = 0
+
+        # 🔥 FIX: убрали count (у тебя его нет в базе)
         for task_id, task_text, completed in tasks:
+
+            if completed:
+                bought += 1
+
             task_list.controls.append(
                 view_tasks(task_id, task_text, completed)
             )
 
-        page.update()   # 🔥 важно!
+        counter_text.value = f"Куплено: {bought}"
+        page.update()
 
+    # 🔥 FIX: убрали count
     def view_tasks(task_id, task_text, completed=0):
         checkbox = ft.Checkbox(
             value=bool(completed),
@@ -68,18 +79,17 @@ def main(page: ft.Page):
 
     def add_task(e):
         if task_input.value:
-            task = task_input.value
-
-            task_id = main_db.add_task(task=task)
+            main_db.add_task(task_input.value)
 
             task_input.value = ""
-            load_tasks()   # 🔥 обновляем список
+            load_tasks()
 
+    
     task_input = ft.TextField(
-        label="Введите задачу",
-        expand=True,
-        on_submit=add_task
-    )
+    label="Введите задачу",
+    expand=True,
+    on_submit=add_task
+)
 
     task_button = ft.IconButton(
         icon=ft.Icons.ADD,
@@ -92,23 +102,15 @@ def main(page: ft.Page):
         load_tasks()
 
     filter_buttons = ft.Row([
-        ft.ElevatedButton(
-            'Все',
-            on_click=lambda e: set_filter('all')
-        ),
-        ft.ElevatedButton(
-            'В работе',
-            on_click=lambda e: set_filter('uncompleted')
-        ),
-        ft.ElevatedButton(
-            'Готово',
-            on_click=lambda e: set_filter('completed')
-        )
+        ft.ElevatedButton('Все', on_click=lambda e: set_filter('all')),
+        ft.ElevatedButton('В работе', on_click=lambda e: set_filter('uncompleted')),
+        ft.ElevatedButton('Готово', on_click=lambda e: set_filter('completed'))
     ])
 
     page.add(
         ft.Row([task_input, task_button]),
         filter_buttons,
+        counter_text,
         task_list
     )
 
@@ -117,4 +119,4 @@ def main(page: ft.Page):
 
 if __name__ == "__main__":
     main_db.init_db()
-    ft.app(target=main)
+    ft.app(target=main, view=ft.AppView.FLET_APP)
