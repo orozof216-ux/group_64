@@ -11,13 +11,30 @@ def main(page: ft.Page):
 
     counter_text = ft.Text("Куплено: 0")
 
+    title = ft.Text("🛒 Список покупок", size=28, weight=ft.FontWeight.BOLD)
+
+    def toggle_theme(e):
+        if page.theme_mode == ft.ThemeMode.LIGHT:
+            page.theme_mode = ft.ThemeMode.DARK
+        else:
+            page.theme_mode = ft.ThemeMode.LIGHT
+        page.update()
+
+    theme_button = ft.IconButton(icon=ft.Icons.DARK_MODE, on_click=toggle_theme)
+
     def load_tasks():
         task_list.controls.clear()
         tasks = main_db.get_tasks(filter_type=filter_type)
 
         bought = 0
 
-        # 🔥 FIX: убрали count (у тебя его нет в базе)
+        if not tasks:
+            task_list.controls.append(
+                ft.Text("Список задач пуст", size=20)
+            )
+            page.update()
+            return
+
         for task_id, task_text, completed in tasks:
 
             if completed:
@@ -30,7 +47,6 @@ def main(page: ft.Page):
         counter_text.value = f"Куплено: {bought}"
         page.update()
 
-    # 🔥 FIX: убрали count
     def view_tasks(task_id, task_text, completed=0):
         checkbox = ft.Checkbox(
             value=bool(completed),
@@ -84,12 +100,11 @@ def main(page: ft.Page):
             task_input.value = ""
             load_tasks()
 
-    
     task_input = ft.TextField(
-    label="Введите задачу",
-    expand=True,
-    on_submit=add_task
-)
+        label="Введите задачу",
+        expand=True,
+        on_submit=add_task
+    )
 
     task_button = ft.IconButton(
         icon=ft.Icons.ADD,
@@ -107,7 +122,13 @@ def main(page: ft.Page):
         ft.ElevatedButton('Купленные', on_click=lambda e: set_filter('completed'))
     ])
 
+    header = ft.Row(
+        [title, theme_button],
+        alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+    )
+
     page.add(
+        header,
         ft.Row([task_input, task_button]),
         filter_buttons,
         counter_text,
